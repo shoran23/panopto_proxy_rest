@@ -111,11 +111,13 @@ async def get_recording_information(room_name):     # include the necessary soap
     if RemoteRecorder[0]['State'] == "Recording":
         recording_id = RemoteRecorder[0]['ScheduledRecordings']['guid'][0]
         return {"id": recording_id, "Recording Information": Get_SR_by_ID(recording_id)}
-    else:
-        if RemoteRecorder[0]['ScheduledRecordings']['guid'] is not None:
-            RR_Name = RemoteRecorder[0]['Name']
-            RR_State = RemoteRecorder[0]['State']
-            return {"name": RR_Name, "state": RR_State, "recording_id": upcoming_recording}
+    # else:
+    #     print(RemoteRecorder[0]['ScheduledRecordings']['guid'])
+        # print(RemoteRecorder[0]['ScheduledRecordings']['guid'])
+        # if RemoteRecorder[0]['ScheduledRecordings']['guid'] is not None:
+        #     RR_Name = RemoteRecorder[0]['Name']
+        #     RR_State = RemoteRecorder[0]['State']
+        #     return {"name": RR_Name, "state": RR_State, "recording_id": upcoming_recording}
     return {"error": "room not found"}
 
 @app.get("/recording_information/<string:room_name>")
