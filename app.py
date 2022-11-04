@@ -28,37 +28,37 @@ SessionManagement_client = auth.get_client('SessionManagement')
 
 app = Flask(__name__)
 
-recordings = [
-    {   
-        "id": 123456, 
-        "Recording Information": {
-            "Title": "Room E52-164 Classroom Recording",
-            "Start Time": "11 1 2022 6 27",
-            "Duration": "5400"
-        }
-    },
-        {   
-        "id": 654321, 
-        "Recording Information": {
-            "Title": "Room E52-221 Classroom Recording",
-            "Start Time": "11 2 2022 6 8",
-            "Duration": "5400"
-        }
-    }
-]
+# recordings = [
+#     {   
+#         "id": 123456, 
+#         "Recording Information": {
+#             "Title": "Room E52-164 Classroom Recording",
+#             "Start Time": "11 1 2022 6 27",
+#             "Duration": "5400"
+#         }
+#     },
+#         {   
+#         "id": 654321, 
+#         "Recording Information": {
+#             "Title": "Room E52-221 Classroom Recording",
+#             "Start Time": "11 2 2022 6 8",
+#             "Duration": "5400"
+#         }
+#     }
+# ]
 
-rooms = [
-    {
-        "name": "E52-164",
-        "state": "Recording",
-        "recording_id": 123456
-    },
-        {
-        "name": "E52-221",
-        "state": "Recording",
-        "recording_id": 654321
-    }
-]
+# rooms = [
+#     {
+#         "name": "E52-164",
+#         "state": "Recording",
+#         "recording_id": 123456
+#     },
+#         {
+#         "name": "E52-221",
+#         "state": "Recording",
+#         "recording_id": 654321
+#     }
+# ]
 
 def get_recorder_dict():        # populate dict
     Grand_Dict_ListofRecorders = RemoteRecorderManagement_client.call_service("ListRecorders",pagination=50)
@@ -108,16 +108,16 @@ def Get_SR_by_ID(sessionId):
 async def get_recording_information(room_name):     # include the necessary soap requests and data processing
     # await asyncio.sleep(2)  # simulation ~ will be removed
     RemoteRecorder = RemoteRecorderManagement_client.call_service("GetRemoteRecordersById",remoteRecorderIds=get_room_id(room_name))
+    # print(RemoteRecorder[0]['ScheduledRecordings'])
+    # print(RemoteRecorder[0]['ScheduledRecordings'])
     if RemoteRecorder[0]['State'] == "Recording":
         recording_id = RemoteRecorder[0]['ScheduledRecordings']['guid'][0]
         return {"id": recording_id, "Recording Information": Get_SR_by_ID(recording_id)}
-    # else:
-    #     print(RemoteRecorder[0]['ScheduledRecordings']['guid'])
-        # print(RemoteRecorder[0]['ScheduledRecordings']['guid'])
-        # if RemoteRecorder[0]['ScheduledRecordings']['guid'] is not None:
-        #     RR_Name = RemoteRecorder[0]['Name']
-        #     RR_State = RemoteRecorder[0]['State']
-        #     return {"name": RR_Name, "state": RR_State, "recording_id": upcoming_recording}
+    elif RemoteRecorder[0]['ScheduledRecordings'] is not None:
+        upcoming_recording = RemoteRecorder[0]['ScheduledRecordings']['guid'][0]
+        RR_Name = RemoteRecorder[0]['Name']
+        RR_State = RemoteRecorder[0]['State']
+        return {"name": RR_Name, "state": RR_State, "recording_id": upcoming_recording}
     return {"error": "room not found"}
 
 @app.get("/recording_information/<string:room_name>")
